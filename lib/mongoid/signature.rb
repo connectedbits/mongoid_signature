@@ -16,12 +16,13 @@ module Mongoid::Signature
   
   def signature_string
     ss = ''
-    sign_fields.each do |f|
-      if !f.nil?
-        if f.respond_to?('signature_string')
-          ss << f.signature_string
+    sign_fields.each do |sf|
+      att = attributes[sf]
+      if !att.nil?
+        if att.respond_to?('signature_string')
+          ss << att.signature_string
         else
-          ss << f.to_s
+          ss << att.to_s
         end
         ss << ';'
       end
