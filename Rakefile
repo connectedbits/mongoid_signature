@@ -25,7 +25,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 Rspec::Core::RakeTask.new('spec:unit') do |spec|
-  spec.pattern = "spec/unit/**/*_spec.rb"
+  spec.pattern = "spec/**/*_spec.rb"
 end
 
 task :spec => ['spec:unit']

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
 describe Mongoid::Signature do
   before do
@@ -44,20 +44,20 @@ describe Mongoid::Signature do
     end
 
     it "should not have the same signature" do
-      @post1.signature.should != @post2.signature
+      @post1.signature.should_not == @post2.signature
     end 
   end
   
   describe "an instance with a related document" do
     before do
-      @post_from_user1 = Post.new(:title => 'My Great Blog Post', :body => 'I was born...', :user => @user1)
-      @post_from_user2 = Post.new(:title => 'My Great Blog Post', :body => 'I was born...', :user => @user2)
+      @post_from_user1 = Post.new(:title => 'My Great Blog Post', :body => 'I was born...', :user => User.new(:name => 'Eric'))
+      @post_from_user2 = Post.new(:title => 'My Great Blog Post', :body => 'I was born...', :user => User.new(:name => 'Dave'))
       @post_from_user1.sign!
       @post_from_user2.sign!
     end
 
     it "should not have the same signature" do
-      @post_from_user1.signature.should  != @post_from_user2.signature
+      @post_from_user1.signature.should_not == @post_from_user2.signature
     end 
   end
 end
