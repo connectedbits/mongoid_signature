@@ -1,0 +1,88 @@
+Sign mongoid documents to prevent duplicates.
+
+== Requirements
+
+* mongoid (>= 2.0.0.rc7)
+
+== Install
+
+To install mongoid_signature, simply add it to your Gemfile:
+
+  gem 'mongoid_signature'
+
+In order to get the latest development version of mongoid_signature:
+
+  gem 'mongoid_signature', :git => 'https://github.com/connectedbits/mongoid_signature.git'
+
+And then:
+  bundle install
+
+== Usage
+
+Add the <tt>include Mongoid::Signature</tt> in the model:
+
+	class User
+	  include Mongoid::Document
+	  include Mongoid::Signature
+  
+	  field :name
+	  field :email
+  
+	  references_many :posts
+	  references_many :comments
+  
+	  sign_document :include => [:name]
+	end
+
+	class Post
+	  include Mongoid::Document
+	  include Mongoid::Timestamps
+	  include Mongoid::Signature
+  
+	  field :title
+	  field :body
+	  field :published, :type => Boolean, :default => false
+  
+	  referenced_in :users
+	  embeds_many :comments  
+  
+	  sign_document :include => [:user, :title, :body]
+	end
+	
+	class Comment
+	  include Mongoid::Document
+	  include Mongoid::Timestamps
+	  include Mongoid::Signature
+
+	  field :body
+
+	  embedded_in :post
+	  referenced_in :user
+
+	  sign_document :include => [:user, :body]
+	end
+
+=== Signing
+
+This will add a <tt>signature</tt> field to your document and provide additional signature_string and sign! methods:
+
+	>> @user = User.new(:name => 'Eric')
+	=> #<User _id: 4d66a345bf354104bd000002, name: "Eric", signature: nil, email: nil>
+	>> @user.sign!
+	=> "535d6fcc4483b2d02167d2d4bc05fdff5e34f6538ac6fa897c63b11d8417e815"
+
+== Known issues
+
+See https://github.com//mongoid_signature/issues
+
+== Repository
+
+See https://github.com/connectedbits/mongoid_signature and feel free to fork it!
+
+== Contributors
+
+See a list of all contributors at https://github.com/connected/mongoid_signature/contributors. Thanks a lot everyone!
+
+== Copyright
+
+Copyright (c) 2011 Connected Bits, LLC. See LICENSE for details.
