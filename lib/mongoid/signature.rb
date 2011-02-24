@@ -35,8 +35,7 @@ module Mongoid::Signature
   end
 
   def validate_unique_signature
-    dupe = where(:signature => self.signature).first
-    dupe = Report.first(:conditions => {:signature => self.signature})
+    dupe = self.where(:signature => self.signature).first
     errors.add(:base, "is a duplicate") if dupe
   end
   
