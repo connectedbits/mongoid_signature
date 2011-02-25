@@ -1,4 +1,4 @@
-require 'digest/sha2'
+require 'digest/md5'
 
 module Mongoid::Signature
   extend ActiveSupport::Concern
@@ -24,7 +24,7 @@ module Mongoid::Signature
   end  
 
   def sign!
-    sig = Digest::SHA2.new << self.signature_string
+    sig = Digest::MD5.new << self.signature_string
     self.signature = sig.to_s if self.respond_to?(:signature)
   end
 
