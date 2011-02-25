@@ -3,13 +3,20 @@ require 'spec_helper'
 describe Mongoid::Signature do
   before do
     @user = User.new(:name => 'Eric')
+    @post = Post.new
   end
 
-  describe "a new instance" do
-    it "should have a nil signature field" do
-      @user.signature.should be_nil
+  describe "a class with save signature option" do
+    it "should have a signature field" do
+      @post.should respond_to(:signature)
     end
   end  
+  
+  describe "a class without save signature option" do
+    it "should not have a signature field" do
+      @user.should_not respond_to(:signature)
+    end
+  end
   
   describe "two instances with the same signature fields" do
     before do

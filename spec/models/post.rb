@@ -10,5 +10,5 @@ class Post
   referenced_in :users
   embeds_many :comments  
   
-  sign_document :include => [:user, :title, :body]
+  sign_document :include => [:user, :title, :body], :save_signature => true
 end

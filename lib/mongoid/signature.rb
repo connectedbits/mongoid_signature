@@ -4,12 +4,6 @@ module Mongoid::Signature
   extend ActiveSupport::Concern
   
   included do
-    field :signature, :type => String, :required => true
-    
-    index :signature
-    
-    before_validation :sign!
-
     class_attribute :sign_fields
     delegate :sign_fields, :to => "self.class"
   end  
@@ -31,7 +25,7 @@ module Mongoid::Signature
 
   def sign!
     sig = Digest::SHA2.new << self.signature_string
-    self.signature = sig.to_s
+    self.signature = sig.to_s if self.respond_to?(:signature)
   end
 
   def validate_unique_signature
@@ -42,6 +36,13 @@ module Mongoid::Signature
   module ClassMethods
     def sign_document(options = {})
       self.sign_fields = options[:include]
+      if options[:save_signature]
+        class_eval <<-EOV
+          field :signature, :type => String, :required => true
+          index :signature
+          before_validation :sign!
+        EOV
+      end
     end
   end
 end
