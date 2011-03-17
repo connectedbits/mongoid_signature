@@ -15,7 +15,7 @@ module Mongoid::Signature
         if self.send(sf).respond_to?('signature_string')
           ss << self.send(sf).signature_string
         else
-          ss << self.send(sf).to_s
+          ss << self.send(sf).to_s rescue ''
         end
         ss << ';'
       end
