@@ -9,28 +9,31 @@ module Mongoid::Signature
   end  
   
   def signature_string
-    ss = ''
-    sign_fields.each do |sf|
-      if self.respond_to?(sf)
-        if self.send(sf).respond_to?('signature_string')
-          ss << self.send(sf).signature_string
-        else
-          ss << self.send(sf).to_s rescue ''
-        end
-        ss << ';'
+    sig = ''
+    self.sign_fields.each do |field|
+      if self.respond_to?(field)
+        value = self.send(field)
+        if !value.nil?
+          if value.respond_to?('signature_string')
+            sig << value.signature_string
+          elsif value.respond_to?('to_s')
+            sig << value.to_s
+          end
+        end  
       end
-    end if sign_fields
-    ss
-  end  
+      sig << ';'
+    end if self.sign_fields
+    sig
+  end
 
   def sign!
-    sig = Digest::MD5.new << self.signature_string
-    self.signature = sig.to_s if self.respond_to?(:signature)
+    sig = (Digest::MD5.new << self.signature_string).to_s
+    self.signature = sig if self.respond_to?(:signature)
   end
 
   def validate_unique_signature
     dupe = self.class.where(:signature => self.signature).first
-    errors.add(:base, "is a duplicate") if dupe
+    errors.add(:base, "is a duplicate") if dupe && dupe._id != self._id
   end
   
   module ClassMethods
