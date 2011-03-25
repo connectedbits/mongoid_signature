@@ -12,13 +12,13 @@ module Mongoid::Signature
     sig = ''
     self.sign_fields.each do |field|
       if self.respond_to?(field)
-        value = self.send(field)
-        if !value.nil?
+        if value = self.send(field)
           if value.respond_to?('signature_string')
-            sig << value.signature_string
+            value = value.signature_string
           elsif value.respond_to?('to_s')
-            sig << value.to_s
+            value = value.to_s
           end
+          sig << value if !value.blank?
         end  
       end
       sig << ';'
