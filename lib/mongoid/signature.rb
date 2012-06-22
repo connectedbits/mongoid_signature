@@ -31,9 +31,22 @@ module Mongoid::Signature
     self.signature = sig if self.respond_to?(:signature)
   end
 
+  def unique_signature?
+    match = self.class.where(signature: self.signature).first
+    if match.nil?
+      true
+    else
+      match._id == self._id && self.class.where(signature: self.signature).count < 2
+    end
+  end      
+
   def validate_unique_signature
-    dupe = self.class.where(:signature => self.signature).first
-    errors.add(:base, "is a duplicate") if dupe && dupe._id != self._id
+    if unique_signature? 
+      true
+    else
+      errors.add(:base, "is a duplicate")
+      false
+    end
   end
   
   module ClassMethods
